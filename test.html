@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Be My Valentine?</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Parisienne&family=Poppins:wght@400;700&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    :root {
+      --primary-color: #ff6b81;
+      --secondary-color: #ffffff;
+      --background-gradient: radial-gradient(
+        circle at top left,
+        #f9c6d5,
+        #d6a4e7,
+        #a18cd1,
+        #fbc2eb
+      );
+      --font-sans: "Poppins", sans-serif;
+      --font-script: "Parisienne", cursive;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      color: #000000;
+      background: var(--background-gradient);
+      min-height: 100vh;
+      padding: 20px;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* Time counters at top corners */
+    .time-counter {
+      position: fixed;
+      top: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 15px 25px;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      z-index: 1001;
+      text-align: center;
+      line-height: 1.3;
+    }
+
+    .time-counter span:not(.counter-label) {
+      font-family: var(--font-sans);
+      color: #000000;
+      font-size: 1.2em;
+    }
+
+    #dating-counter {
+      right: 20px;
+    }
+
+    #valentine-counter {
+      left: 20px;
+    }
+
+    .counter-label {
+      display: block;
+      font-family: var(--font-script);
+      font-size: 1.6em;
+      color: var(--primary-color);
+      margin-bottom: 3px;
+    }
+
+    .valentine-time {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    /* Main container */
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 60px;
+      border-radius: 20px;
+      text-align: center;
+      width: min(95%, 1200px);
+      /* Increased top and bottom margin to add more vertical spacing
+         and ensure it doesn't touch time counters in corners */
+      margin: 150px auto;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      position: relative;
+      z-index: 2;
+      animation: fadeIn 1.5s ease-in-out;
+    }
+
+    h1 {
+      font-family: var(--font-script);
+      color: var(--primary-color);
+      font-size: clamp(3.5em, 6vw, 5em);
+      /* Slight increase to spacing below for clearer hierarchy */
+      margin-bottom: 50px;
+      animation: subtleBounce 2s infinite;
+    }
+
+    .message {
+      font-size: clamp(1.2em, 3vw, 1.8em);
+      color: #000000;
+      /* Slight increase to spacing below for clearer hierarchy */
+      margin-bottom: 50px;
+      line-height: 1.6;
+      animation: slideIn 1s;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-bottom: 30px;
+      position: relative;
+      min-height: 120px;
+    }
+
+    .btn {
+      padding: 20px 80px;
+      font-size: clamp(1.2em, 2vw, 1.8em);
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-yes {
+      background: linear-gradient(45deg, #ff6b81, #d6a4e7);
+      color: var(--secondary-color);
+      z-index: 3;
+    }
+
+    .btn-no {
+      background: linear-gradient(45deg, #808080, #A9A9A9);
+      color: var(--secondary-color);
+      z-index: 4;
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Scroll indicator */
+    .scroll-indicator {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      /* Changed to white, slightly larger text, fully visible */
+      color: #ffffff;
+      font-family: var(--font-script);
+      font-size: 1.5em;
+      opacity: 1;
+      animation: bounce 2s infinite;
+      margin: 40px auto 0 auto;
+      text-align: center;
+    }
+
+    .scroll-indicator span {
+      margin-top: 5px;
+    }
+
+    /* Gallery section */
+    .gallery-section {
+      width: min(95%, 1200px);
+      /* Increased vertical margins to add scrolling distance */
+      margin: 150px auto;
+      padding: 60px;
+      background: rgba(255, 255, 255, 0.98);
+      border-radius: 30px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+      animation: fadeIn 1.5s ease-in-out;
+    }
+
+    .gallery-title {
+      font-family: var(--font-script);
+      color: var(--primary-color);
+      font-size: clamp(2.8em, 5vw, 4em);
+      text-align: center;
+      margin-bottom: 60px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+
+    .gallery-title:after {
+      content: '';
+      position: absolute;
+      bottom: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 40px;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .gallery-item {
+      position: relative;
+      transition: all 0.4s ease;
+      transform-origin: center;
+      aspect-ratio: 1;
+    }
+
+    .gallery-frame {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 107, 129, 0.1);
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.4s ease;
+      overflow: hidden;
+    }
+
+    .gallery-image {
+      width: 100%;
+      height: calc(100% - 60px);
+      object-fit: cover;
+      border-radius: 8px;
+      transition: all 0.4s ease;
+      cursor: pointer;
+    }
+
+    .gallery-caption {
+      font-family: var(--font-sans);
+      color: #000000;
+      font-size: 1em;
+      text-align: center;
+      margin-top: 15px;
+      padding: 0 10px;
+      line-height: 1.4;
+      opacity: 1;
+      transform: translateY(0);
+      transition: all 0.3s ease;
+    }
+
+    .gallery-item:hover {
+      transform: translateY(-5px);
+    }
+
+    .gallery-item:hover .gallery-frame {
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+      border-color: rgba(255, 107, 129, 0.2);
+    }
+
+    .gallery-item:hover .gallery-image {
+      transform: scale(1.03);
+    }
+
+    .gallery-item:hover .gallery-caption {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Gallery modal */
+    .gallery-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .gallery-modal-content {
+      max-width: 90%;
+      max-height: 90vh;
+      position: relative;
+    }
+
+    .gallery-modal-image {
+      max-width: 100%;
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+
+    .gallery-modal-caption {
+      color: white;
+      text-align: center;
+      margin-top: 15px;
+      font-family: var(--font-sans);
+      font-size: 1.2em;
+    }
+
+    .close-gallery-modal {
+      position: absolute;
+      top: -40px;
+      right: -40px;
+      color: white;
+      font-size: 2em;
+      cursor: pointer;
+      padding: 10px;
+    }
+
+    /* Music player */
+    .music-player {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      z-index: 1001;
+    }
+
+    .play-song-btn {
+      padding: 10px 20px;
+      font-size: 1em;
+      border: none;
+      border-radius: 15px;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.95);
+      color: #000000;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s, box-shadow 0.3s;
+      font-family: var(--font-sans);
+    }
+
+    .play-song-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .play-song-btn.playing {
+      background: rgba(255, 107, 129, 0.95);
+      color: var(--secondary-color);
+    }
+
+    /* The comedic/funny message that appears when hovering over the "No" button */
+    .funny-message {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: white;
+      color: var(--primary-color);
+      padding: 15px 30px;
+      border-radius: 10px;
+      font-size: 1.2em;
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      opacity: 0;
+      transition: opacity 0.3s;
+      text-align: center;
+      max-width: 90%;
+      pointer-events: none;
+    }
+
+    /* Modal for the "Yes" button */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: #fff;
+      padding: 40px;
+      border-radius: 15px;
+      text-align: center;
+      position: relative;
+      animation: fadeInModal 0.5s;
+      max-width: 90%;
+      width: 500px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiNmZmYiLz48ZyBvcGFjaXR5PSIwLjEiPjxwYXRoIGQ9Ik0wIDBoMjV2MjVIMHoiIGZpbGw9IiMwMDAiIHRyYW5zZm9ybT0icm90YXRlKDMwKSBzY2FsZSgxLjIpIi8+PHBhdGggZD0iTTAgMGgyNXYyNUgweiIgZmlsbD0iIzAwMCIgdHJhbnNmb3JtPSJyb3RhdGUoNjApIHNjYWxlKDEuNSkiLz48L2c+PC9zdmc+');
+      background-blend-mode: overlay;
+    }
+
+    .modal-photo-container {
+      width: 100%;
+      max-width: 400px;
+      height: 300px;
+      margin: 20px 0;
+      border-radius: 15px;
+      overflow: hidden;
+      position: relative;
+      border: 5px solid var(--primary-color);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      transition: transform 0.3s ease;
+    }
+
+    .modal-photo-container:hover .modal-photo {
+      transform: scale(1.05);
+    }
+
+    .modal-text {
+      margin-top: 20px;
+      max-width: 80%;
+      font-family: var(--font-sans);
+      color: #000000;
+      font-size: 1.2em;
+      line-height: 1.5;
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      font-size: 1.5em;
+      cursor: pointer;
+      color: #aaa;
+      transition: color 0.3s;
+      padding: 5px;
+    }
+
+    .close-modal:hover {
+      color: var(--primary-color);
+    }
+
+    /* Floating elements (emojis) on the page background */
+    .floating-elements {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .floating-element {
+      position: absolute;
+      animation: float linear infinite;
+      opacity: 0.6;
+      font-size: 1.5em;
+      user-select: none;
+    }
+
+    /* Confetti container */
+    .confetti-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* Custom cursor */
+    .custom-cursor {
+      position: fixed;
+      color: var(--secondary-color);
+      font-size: 24px;
+      pointer-events: none;
+      z-index: 1002;
+      width: auto;
+      height: auto;
+      background: transparent !important;
+      border-radius: 0;
+      box-shadow: none;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+      transition: transform 0.2s ease;
+    }
+
+    .custom-cursor.hover-yes {
+      transform: scale(1.5);
+    }
+
+    /* Keyframes */
+    @keyframes float {
+      0% {
+        transform: translateY(-20px) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.6;
+      }
+      90% {
+        opacity: 0.6;
+      }
+      100% {
+        transform: translateY(105vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInModal {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes subtleBounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-10px);
+      }
+      60% {
+        transform: translateY(-5px);
+      }
+    }
+
+    /* Media queries */
+    @media (max-width: 1200px) {
+      .gallery-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 992px) {
+      .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 40px;
+        /* keep the new margin but reduce if needed for small screens */
+        margin: 120px auto;
+      }
+
+      .buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .btn {
+        padding: 15px 40px;
+      }
+
+      .modal-content {
+        width: 90%;
+      }
+
+      .modal-photo-container {
+        height: 200px;
+      }
+
+      .time-counter {
+        font-size: 1.2em;
+        padding: 10px 20px;
+      }
+
+      #dating-counter {
+        right: 10px;
+      }
+
+      #valentine-counter {
+        left: 10px;
+      }
+
+      .gallery-section {
+        margin: 120px auto;
+        padding: 40px;
+      }
+
+      .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        padding: 10px;
+      }
+
+      .scroll-indicator {
+        margin-top: 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .gallery-item {
+        aspect-ratio: 4/3;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="time-counter" id="dating-counter">
+    <span class="counter-label">Together Since</span>
+    <span id="dating-days">0</span> Days
+  </div>
+
+  <div class="time-counter" id="valentine-counter">
+    <span class="counter-label">Until Valentine's</span>
+    <div class="valentine-time">
+      <span id="valentine-days">0</span> Days
+      <span id="valentine-hours">0</span> Hours
+    </div>
+  </div>
+
+  <div class="funny-message" id="funnyMessage"></div>
+  <div class="floating-elements" id="floatingElements"></div>
+  <div class="confetti-container" id="confettiContainer"></div>
+  <div class="custom-cursor" id="customCursor">❄️</div>
+
+  <div class="container">
+    <h1>Will You Be My Valentine?</h1>
+    <p class="message">
+      From the moment we met, you've brought so much joy and love into my life.
+      Every day with you is a new adventure, and I can't imagine my life without you.
+      Will you be my Valentine?
+    </p>
+    <div class="buttons">
+      <button id="yesButton" class="btn btn-yes">Yes!</button>
+      <button id="noButton" class="btn btn-no">No</button>
+    </div>
+  </div>
+
+  <!-- Scroll indicator now placed outside the white box, in white text -->
+  <div class="scroll-indicator" id="scrollIndicator">
+    <span>Scroll down</span>
+    <span>👇</span>
+  </div>
+
+  <section class="gallery-section">
+    <h2 class="gallery-title">Our Journey Together</h2>
+    <div class="gallery-grid">
+      <div class="gallery-item">
+        <div class="gallery-frame">
+          <img src="images/first_date.jpg" alt="First Date" class="gallery-image" />
+          <p class="gallery-caption">First Date ❤️</p>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <div class="gallery-frame">
+          <img src="images/first_roadtrip.jpg" alt="First Road Trip" class="gallery-image" />
+          <p class="gallery-caption">Road Trip 🚗</p>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <div class="gallery-frame">
+          <img src="images/first_pet.jpg" alt="First Pet" class="gallery-image" />
+          <p class="gallery-caption">Our Pet 🐾</p>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <div class="gallery-frame">
+          <img src="images/farmcart.jpg" alt="Farmcart" class="gallery-image" />
+          <p class="gallery-caption">Farm Market 🚜</p>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <div class="gallery-frame">
+          <img src="images/stoneyriver.jpg" alt="Stoney River" class="gallery-image" />
+          <p class="gallery-caption">Stoney River 🌊</p>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <div class="gallery-frame">
+          <img src="images/kiss.jpg" alt="Muah Muah" class="gallery-image" />
+          <p class="gallery-caption">First Kiss 💋</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="music-player">
+    <button id="playSongBtn" class="play-song-btn">
+      Play Our Song ♪
+    </button>
+    <audio id="ourSong" src="our-song.mp3"></audio>
+  </div>
+
+  <!-- Gallery Modal -->
+  <div id="galleryModal" class="gallery-modal">
+    <div class="gallery-modal-content">
+      <span class="close-gallery-modal">&times;</span>
+      <img src="" alt="" class="gallery-modal-image" />
+      <p class="gallery-modal-caption"></p>
+    </div>
+  </div>
+
+  <!-- Yes Button Modal -->
+  <div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDescription">
+    <div class="modal-content">
+      <span class="close-modal" id="closeModal" aria-label="Close Modal">&times;</span>
+      <h2 id="modalTitle" style="font-family: var(--font-script); color: var(--primary-color); font-size: clamp(3em, 6vw, 5em);">Yay! ❤️</h2>
+      <div class="modal-photo-container">
+        <img src="images/photo1.jpg" alt="Special Moment" class="modal-photo" />
+      </div>
+      <div class="modal-text" id="modalDescription">
+        <p>I'm so happy you said yes! Looking forward to a wonderful Valentine's Day together.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const wittyMessages = [
+      "Are you kidding me? 😜",
+      "Don't be shy! 😏",
+      "I knew you'd say yes! 😉",
+      "Nice try! 😄",
+      "You can't escape! 😆",
+      "Still thinking? 😅",
+      "Come on, say yes! 😇",
+      "No way! 😂",
+      "How about a yes? 😘",
+      "Trying to say no? 😝",
+      "Can't say no to you! 🥰",
+      "Seriously? 🤔",
+      "Better say yes! 💕",
+      "Yes is the way! 🎉",
+      "No can wait! 😎",
+      "Don't leave me hanging! 😢",
+      "Think positive! 🌟",
+      "You're too sweet! 🍬",
+      "What's stopping you? 🚀",
+      "Let's make it official! 📝"
+    ];
+
+    function updateDatingCounter() {
+      const startDate = new Date('2023-08-09');
+      const today = new Date();
+      const diffTime = today - startDate;
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      document.getElementById('dating-days').textContent = diffDays;
+    }
+
+    function updateValentineCounter() {
+      const today = new Date();
+      let valentineYear = today.getFullYear();
+      const valentineDate = new Date(valentineYear, 1, 14);
+
+      if (today > valentineDate) {
+        valentineYear += 1;
+      }
+
+      const nextValentine = new Date(valentineYear, 1, 14);
+      const diffTime = nextValentine - today;
+
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      const diffHours = Math.floor((diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+      document.getElementById('valentine-days').textContent = diffDays;
+      document.getElementById('valentine-hours').textContent = diffHours;
+    }
+
+    class NoButtonHandler {
+      constructor(button, messageElement) {
+        this.button = button;
+        this.messageElement = messageElement;
+        this.isMoving = false;
+        this.messageTimeout = null;
+        this.moveTimeout = null;
+        this.boundingPadding = 20;
+
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        this.button.addEventListener("mouseover", () => this.moveButton());
+        this.button.addEventListener("focus", () => this.moveButton());
+        this.button.addEventListener("click", (e) => {
+          e.preventDefault();
+          this.showMessage();
+        });
+      }
+
+      getRandomPosition() {
+        const buttonRect = this.button.getBoundingClientRect();
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+
+        const safeX = viewportWidth - buttonRect.width - this.boundingPadding;
+        const safeY = viewportHeight - buttonRect.height - this.boundingPadding;
+
+        const currentX = buttonRect.left;
+        const currentY = buttonRect.top;
+
+        let newX, newY;
+        do {
+          newX = Math.min(
+            Math.max(this.boundingPadding, Math.random() * safeX),
+            safeX
+          );
+          newY = Math.min(
+            Math.max(this.boundingPadding, Math.random() * safeY),
+            safeY
+          );
+        } while (
+          Math.abs(newX - currentX) < 100 &&
+          Math.abs(newY - currentY) < 100
+        );
+
+        return { x: newX, y: newY };
+      }
+
+      moveButton() {
+        if (this.isMoving || this.button.disabled) return;
+        this.isMoving = true;
+
+        if (this.button.style.position !== "fixed") {
+          const rect = this.button.getBoundingClientRect();
+          this.button.style.position = "fixed";
+          this.button.style.top = rect.top + "px";
+          this.button.style.left = rect.left + "px";
+          this.button.style.margin = "0";
+        }
+
+        const newPos = this.getRandomPosition();
+
+        this.button.style.transition = "all 0.4s ease-out";
+        this.button.style.left = newPos.x + "px";
+        this.button.style.top = newPos.y + "px";
+
+        this.showMessage();
+
+        clearTimeout(this.moveTimeout);
+        this.moveTimeout = setTimeout(() => {
+          this.isMoving = false;
+        }, 400);
+      }
+
+      showMessage() {
+        const randomMsg =
+          wittyMessages[Math.floor(Math.random() * wittyMessages.length)];
+        this.messageElement.textContent = randomMsg;
+        this.messageElement.style.opacity = "1";
+
+        clearTimeout(this.messageTimeout);
+        this.messageTimeout = setTimeout(() => {
+          this.messageElement.style.opacity = "0";
+        }, 2000);
+      }
+
+      enable() {
+        this.button.disabled = false;
+        this.button.style.opacity = "1";
+        this.button.style.cursor = "pointer";
+        if (this.button.style.position === "fixed") {
+          this.button.style.position = "static";
+          this.button.style.top = "auto";
+          this.button.style.left = "auto";
+        }
+      }
+
+      disable() {
+        this.button.disabled = true;
+        this.button.style.opacity = "0.5";
+        this.button.style.cursor = "not-allowed";
+      }
+    }
+
+    class FloatingElementsManager {
+      constructor(container) {
+        this.container = container;
+        this.emojis = ["✨", "❤️"];
+        this.maxElements = 20;
+        this.createInterval = null;
+      }
+
+      createFloatingElement() {
+        const element = document.createElement("div");
+        element.className = "floating-element";
+        element.textContent = this.emojis[Math.floor(Math.random() * this.emojis.length)];
+        element.style.left = `${Math.random() * 100}%`;
+        const size = Math.random() * 20 + 20;
+        element.style.fontSize = `${size}px`;
+        const duration = Math.random() * 5 + 5;
+        element.style.animationDuration = `${duration}s`;
+        this.container.appendChild(element);
+
+        setTimeout(() => {
+          if (element.parentNode === this.container) {
+            this.container.removeChild(element);
+          }
+        }, duration * 1000);
+      }
+
+      start() {
+        for (let i = 0; i < this.maxElements / 2; i++) {
+          this.createFloatingElement();
+        }
+        this.createInterval = setInterval(() => {
+          if (this.container.childNodes.length < this.maxElements) {
+            this.createFloatingElement();
+          }
+        }, 1000);
+      }
+
+      stop() {
+        if (this.createInterval) {
+          clearInterval(this.createInterval);
+          this.createInterval = null;
+        }
+        this.container.innerHTML = "";
+      }
+    }
+
+    class ConfettiManager {
+      constructor(container) {
+        this.container = container;
+        this.canvas = document.createElement("canvas");
+        this.canvas.style.width = "100%";
+        this.canvas.style.height = "100%";
+        this.canvas.style.display = "block";
+        this.canvas.style.pointerEvents = "none";
+        this.container.appendChild(this.canvas);
+        this.ctx = this.canvas.getContext("2d");
+        this.colors = [
+          "rgba(255, 107, 129, 0.8)",
+          "rgba(214, 164, 231, 0.8)",
+          "rgba(251, 194, 235, 0.8)",
+          "rgba(161, 140, 209, 0.8)",
+          "rgba(255, 159, 243, 0.8)",
+          "rgba(254, 202, 87, 0.8)",
+          "rgba(255, 193, 227, 0.8)",
+          "rgba(253, 228, 207, 0.8)"
+        ];
+        this.particles = [];
+        this.maxParticles = 300;
+        this.gravity = 0.05;
+        this.drag = 0.0005;
+        this.animationFrameId = null;
+        this.resizeCanvas();
+        window.addEventListener("resize", () => this.resizeCanvas());
+      }
+
+      resizeCanvas() {
+        this.canvas.width = this.container.clientWidth;
+        this.canvas.height = this.container.clientHeight;
+      }
+
+      updateAndDraw() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        for (let i = 0; i < this.particles.length; i++) {
+          const p = this.particles[i];
+          p.vy += this.gravity;
+          p.vx *= (1 - this.drag);
+          p.vy *= (1 - this.drag);
+          p.x += p.vx;
+          p.y += p.vy;
+          p.rotation += p.rotationSpeed;
+          this.drawParticle(p);
+          if (
+            p.x < -100 ||
+            p.x > this.canvas.width + 100 ||
+            p.y > this.canvas.height + 100
+          ) {
+            this.particles.splice(i, 1);
+            i--;
+          }
+        }
+        if (this.particles.length > 0) {
+          this.animationFrameId = requestAnimationFrame(() => this.updateAndDraw());
+        } else {
+          this.animationFrameId = null;
+        }
+      }
+
+      drawParticle(p) {
+        this.ctx.save();
+        this.ctx.translate(p.x, p.y);
+        this.ctx.rotate(p.rotation);
+        this.ctx.beginPath();
+        const size = p.size;
+        this.ctx.moveTo(0, 0);
+        this.ctx.bezierCurveTo(-size / 2, -size / 2, -size, size / 4, 0, size);
+        this.ctx.bezierCurveTo(size, size / 4, size / 2, -size / 2, 0, 0);
+        this.ctx.closePath();
+        this.ctx.fillStyle = p.color;
+        this.ctx.fill();
+        this.ctx.restore();
+      }
+
+      createBurst(cx, cy, count) {
+        for (let i = 0; i < count; i++) {
+          if (this.particles.length >= this.maxParticles) break;
+          const angle = Math.random() * 2 * Math.PI;
+          const speed = Math.random() * 4 + 3;
+          const vx = Math.cos(angle) * speed;
+          const vy = Math.sin(angle) * speed;
+          this.particles.push({
+            x: cx,
+            y: cy,
+            vx,
+            vy,
+            size: 12 + Math.random() * 16,
+            color: this.colors[Math.floor(Math.random() * this.colors.length)],
+            rotation: Math.random() * 2 * Math.PI,
+            rotationSpeed: (Math.random() - 0.5) * 0.1,
+          });
+        }
+      }
+
+      launch() {
+        const totalBursts = 5;
+        for (let i = 0; i < totalBursts; i++) {
+          setTimeout(() => {
+            const centerX = this.canvas.width * 0.2 + Math.random() * this.canvas.width * 0.6;
+            const centerY = this.canvas.height * 0.2 + Math.random() * this.canvas.height * 0.6;
+            this.createBurst(centerX, centerY, 40);
+            this.addSparkleEffect(centerX, centerY);
+            if (!this.animationFrameId) {
+              this.updateAndDraw();
+            }
+          }, i * 800);
+        }
+      }
+
+      addSparkleEffect(x, y) {
+        for (let i = 0; i < 8; i++) {
+          if (this.particles.length >= this.maxParticles) break;
+          const angle = Math.random() * 2 * Math.PI;
+          const speed = 1 + Math.random() * 2;
+          const vx = Math.cos(angle) * speed;
+          const vy = Math.sin(angle) * speed;
+          this.particles.push({
+            x,
+            y,
+            vx,
+            vy,
+            size: 6 + Math.random() * 8,
+            color: "rgba(255, 255, 255, 0.9)",
+            rotation: Math.random() * 2 * Math.PI,
+            rotationSpeed: (Math.random() - 0.5) * 0.05,
+          });
+        }
+      }
+    }
+
+    function setupGalleryModal() {
+      const galleryModal = document.getElementById('galleryModal');
+      const modalImage = galleryModal.querySelector('.gallery-modal-image');
+      const modalCaption = galleryModal.querySelector('.gallery-modal-caption');
+      const closeButton = galleryModal.querySelector('.close-gallery-modal');
+
+      document.querySelectorAll('.gallery-item').forEach(item => {
+        const img = item.querySelector('.gallery-image');
+        const caption = item.querySelector('.gallery-caption');
+
+        img.addEventListener('click', () => {
+          modalImage.src = img.src;
+          modalImage.alt = img.alt;
+          modalCaption.textContent = caption.textContent;
+          galleryModal.style.display = 'flex';
+        });
+      });
+
+      closeButton.addEventListener('click', () => {
+        galleryModal.style.display = 'none';
+      });
+
+      window.addEventListener('click', (e) => {
+        if (e.target === galleryModal) {
+          galleryModal.style.display = 'none';
+        }
+      });
+
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && galleryModal.style.display === 'flex') {
+          galleryModal.style.display = 'none';
+        }
+      });
+    }
+
+    function setupMusicPlayer() {
+      const playButton = document.getElementById('playSongBtn');
+      const audio = document.getElementById('ourSong');
+      let isPlaying = false;
+
+      playButton.addEventListener('click', () => {
+        if (isPlaying) {
+          audio.pause();
+          playButton.textContent = 'Play Our Song ♪';
+          playButton.classList.remove('playing');
+        } else {
+          audio.play().catch(error => {
+            console.error('Error playing audio:', error);
+          });
+          playButton.textContent = 'Pause Our Song ♪';
+          playButton.classList.add('playing');
+        }
+        isPlaying = !isPlaying;
+      });
+
+      audio.addEventListener('ended', () => {
+        isPlaying = false;
+        playButton.textContent = 'Play Our Song ♪';
+        playButton.classList.remove('playing');
+      });
+    }
+
+    function preloadImage(src, callback) {
+      const img = new Image();
+      img.src = src;
+      img.onload = () => callback(img);
+      img.onerror = () => {
+        console.error('Error loading image:', src);
+        img.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cGF0aCBkPSJNNDY0IDQ0OEg0OGMtMjYuNTEgMC00OC0yMS40OS00OC00OFYxMTJjMC0yNi41MSAyMS40OSA0OCA0OCA0OGg0MTZjMjYuNTEgMCA0OCAyMS40OSA0OCA0OHYyODhjMCAyNi41MS0yMS40OSA0OC00OCA0OHpNMTEyIDEyMGMtMTMuMjU1IDAtMjQgMTAuNzQ1LTI0IDI0czEwLjc0NSAyNCAyNCAyNCAyNC0xMC43NDUgMjQtMjQtMTAuNzQ1LTI0LTI0LTI0em02NCAyNTZIMTQ0di0yNGMwLTIxLjM4MSAxNy4zNzktMzguNjI1IDM4LjYyNS0zOC42MjVoMjYuNzVDMjMwLjYyMSAzMTQuMzc1IDI0OCAzMzEuNjE5IDI0OCAzNTN2MjR6bTExMiAwSDI1NnYtMjRjMC0zNi4yNzUtMjkuNDYtNjUuNzQ2LTY1LjYyNS02NS43NDZIMTYzLjYyNUMxMjcuNDYgMjYyLjI1NCA5OCAyOTEuNzI1IDk4IDMyOHYyNGgtNDB2LTI0OGgzODR2MjQ4eiIgZmlsbD0iI2ZmNmI4MSIvPjwvc3ZnPg==';
+        callback(img);
+      };
+    }
+
+    function preloadGalleryImages() {
+      const galleryImages = document.querySelectorAll('.gallery-image');
+      galleryImages.forEach(img => {
+        if (img.src.includes('placeholder')) {
+          return;
+        }
+        preloadImage(img.src, loadedImg => {
+          img.src = loadedImg.src;
+        });
+      });
+    }
+
+    function setupScrollIndicator() {
+      // Click on the scroll-indicator to smooth-scroll down to the gallery section
+      const scrollIndicator = document.getElementById('scrollIndicator');
+      const gallerySection = document.querySelector('.gallery-section');
+      if (scrollIndicator && gallerySection) {
+        scrollIndicator.addEventListener('click', () => {
+          gallerySection.scrollIntoView({ behavior: 'smooth' });
+        });
+      }
+    }
+
+    // Initialize everything
+    const floatingElements = new FloatingElementsManager(
+      document.getElementById("floatingElements")
+    );
+    floatingElements.start();
+
+    const noButtonHandler = new NoButtonHandler(
+      document.getElementById("noButton"),
+      document.getElementById("funnyMessage")
+    );
+
+    const confetti = new ConfettiManager(
+      document.getElementById("confettiContainer")
+    );
+
+    const modal = document.getElementById("modal");
+    const yesButton = document.getElementById("yesButton");
+    const closeModal = document.getElementById("closeModal");
+
+    let isYesPressed = false;
+
+    yesButton.addEventListener("click", () => {
+      modal.style.display = "flex";
+      confetti.launch();
+      if (!isYesPressed) {
+        isYesPressed = true;
+        noButtonHandler.disable();
+        yesButton.disabled = true;
+      }
+      modal.querySelector('.modal-content').focus();
+    });
+
+    closeModal.addEventListener("click", () => {
+      modal.style.display = "none";
+      if (isYesPressed) {
+        isYesPressed = false;
+        noButtonHandler.enable();
+        yesButton.disabled = false;
+      }
+      yesButton.focus();
+    });
+
+    window.addEventListener("click", (e) => {
+      if (e.target === modal) {
+        modal.style.display = "none";
+        if (isYesPressed) {
+          isYesPressed = false;
+          noButtonHandler.enable();
+          yesButton.disabled = false;
+        }
+        yesButton.focus();
+      }
+    });
+
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && modal.style.display === "flex") {
+        modal.style.display = "none";
+        if (isYesPressed) {
+          isYesPressed = false;
+          noButtonHandler.enable();
+          yesButton.disabled = false;
+        }
+        yesButton.focus();
+      }
+    });
+
+    document.addEventListener("mousemove", (e) => {
+      const cursor = document.getElementById("customCursor");
+      cursor.style.left = `${e.clientX}px`;
+      cursor.style.top = `${e.clientY}px`;
+    });
+
+    yesButton.addEventListener("mouseenter", () => {
+      document.getElementById("customCursor").classList.add("hover-yes");
+    });
+
+    yesButton.addEventListener("mouseleave", () => {
+      document.getElementById("customCursor").classList.remove("hover-yes");
+    });
+
+    // Initialize counters
+    updateDatingCounter();
+    updateValentineCounter();
+    setInterval(() => {
+      updateDatingCounter();
+      updateValentineCounter();
+    }, 1000 * 60 * 5);
+
+    // Initialize other features on load
+    window.addEventListener('load', () => {
+      preloadGalleryImages();
+      setupGalleryModal();
+      setupMusicPlayer();
+      setupScrollIndicator();
+    });
+  </script>
+</body>
+</html>
